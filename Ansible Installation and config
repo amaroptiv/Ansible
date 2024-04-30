@@ -1,0 +1,69 @@
+Install ansible in Control Node, As am using Amazon Linux2 OS, Amazon-linux-extras will install all required dependencies.
+
+Usually the Master node should be "2x" larger than the worker/control nodes
+
+Perform the below commands on the Master Engine
+-------------------------------------------------
+
+amazon-linux-extras install ansible2 -y
+
+verify ansible version by running below command
+ansible --version
+which ansible
+ansible-config dump
+
+Create a common user for all ansible activities
+
+Creating a user, Here am using "ansibleusr" user and set password.
+
+useradd ansibleusr
+passwd ansibleusr
+
+Provide Sudeoer permissions
+visudo
+
+Add below entry to sudeor file.
+
+ansibleusr ALL=(ALL) NOPASSWD: ALL
+
+login with the ansibleusr
+
+su - ansibleusr
+
+Enable SSH Connection across the instances.
+
+vim /etc/ssh/sshd_config
+
+Set "PasswordAuthentication yes"
+service sshd restart
+
+Control Nodes
+=============
+
+Connect to all the nodes and Create common user same as Above.
+
+useradd ansibleusr
+passwd ansibleusr
+visudo
+ansibleusr ALL=(ALL) NOPASSWD: ALL
+su - ansibleusr
+vim /etc/ssh/sshd_config
+Set "PasswordAuthentication yes"
+service sshd restart
+
+Configure password-less authentication.
+
+Perform this on all the above Control Nodes
+
+Create an SSH Public key and Private Key in Server and Copy Public Key to across the instances. Make sure you are doing this as ansibleusr, and perform this from Control Node.
+
+Perform the below commands on Master
+-----------------------------------
+
+ssh-keygen -t rsa
+ssh-copy-id ansibleuser@Managed-node-1/2/3
+
+Now test the Password-less authentication. It should not prompt any password.
+ssh Node-ip
+
+Yeeee! you have configured Ansible. Happy Learning!
